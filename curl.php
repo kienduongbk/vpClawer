@@ -25,16 +25,16 @@ function getCmnd($data){
      }
      return $return;
 }
-/*
-example
-$a = html_entity_decode(getData('2651','3861663'));
+
+// example
+/*$a = html_entity_decode(getData('2651','3861663'));
 preg_match_all('/<table.*?>(.*?)<\/table>/si',$a, $out, PREG_PATTERN_ORDER);
 
 preg_match_all('/<tr.*?>(.*?)<\/tr>/si',$out[0][0], $tr, PREG_PATTERN_ORDER);
 preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][17], $td1, PREG_PATTERN_ORDER);
 preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][18], $td2, PREG_PATTERN_ORDER);
 echo "<pre>";
-var_dump($td2);die();*/
+var_dump($tr);die();*/
 
 /** Error reporting */
 error_reporting(E_ALL);
@@ -105,24 +105,32 @@ $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('B1', 'FullName')
             ->setCellValue('C1', 'Cmd')
             ->setCellValue('D1', 'Result')
-            ->setCellValue('E1', 'UPL')
-            ->setCellValue('F1', 'CC');
+            ->setCellValue('E1', 'Đơn vị được khai thác')
+            ->setCellValue('F1', 'Hạn mức UPL tối đa')
+            ->setCellValue('G1', 'Hạn mức thẻ TD tối đa')
+            ->setCellValue('H1', 'Phân luồng trình hồ sơ của UPL')
+            ->setCellValue('I1', 'Phân luồng trình hồ sơ của CC');
             $i = 2;
 foreach ($data as $key => $value) {
      $cmnd = getCmnd($value[2]);
      $curls = getData($cmnd,$value[0]);
      preg_match_all('/<table.*?>(.*?)<\/table>/si',$curls, $out, PREG_PATTERN_ORDER);
      $result = 0;
-     $upl = '';
-     $cc = '';
+     $t1 = $t2 = $t3 = $t4 = $t5 = '';
      if(!empty($out[1])){
           preg_match_all('/<table.*?>(.*?)<\/table>/si',$curls, $out, PREG_PATTERN_ORDER);
           preg_match_all('/<tr.*?>(.*?)<\/tr>/si',$out[0][0], $tr, PREG_PATTERN_ORDER);
-          preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][17], $td1, PREG_PATTERN_ORDER);
-          preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][18], $td2, PREG_PATTERN_ORDER);
+          preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][3], $td1, PREG_PATTERN_ORDER);
+          preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][4], $td2, PREG_PATTERN_ORDER);
+          preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][5], $td3, PREG_PATTERN_ORDER);
+          preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][17], $td4, PREG_PATTERN_ORDER);
+          preg_match_all('/<td.*?>(.*?)<\/td>/si',$tr[0][18], $td5, PREG_PATTERN_ORDER);
           $result = 1;
-          $upl = strip_tags($td1[0][1],"<td>");
-          $cc = strip_tags($td2[0][1],"<td>");
+          $t1 = strip_tags($td1[0][1],"<td>");
+          $t2 = strip_tags($td2[0][1],"<td>");
+          $t3 = strip_tags($td3[0][1],"<td>");
+          $t4 = strip_tags($td4[0][1],"<td>");
+          $t5 = strip_tags($td5[0][1],"<td>");
           
      }
      $objPHPExcel->setActiveSheetIndex(0)
@@ -130,8 +138,11 @@ foreach ($data as $key => $value) {
             ->setCellValue('B'.$i, $value[1])
             ->setCellValue('C'.$i, $value[2])
             ->setCellValue('D'.$i,  $result)
-            ->setCellValue('E'.$i, $upl)
-            ->setCellValue('F'.$i,  $cc);
+            ->setCellValue('E'.$i, $t1)
+            ->setCellValue('F'.$i, $t2)
+            ->setCellValue('G'.$i, $t3)
+            ->setCellValue('H'.$i, $t4)
+            ->setCellValue('I'.$i, $t5);
   $i++;
 }
 
